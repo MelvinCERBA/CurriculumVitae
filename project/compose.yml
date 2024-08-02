@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+
+  mysql:
+    image: mysql:9
+    restart: always
+    volumes:
+      - data:/var/lib/mysql 
+    environment:
+      MYSQL_ROOT_PASSWORD: local
+      MYSQL_DATABASE: curriculum
+    ports:
+      - "3306:3306"
+
+volumes:
+  data:
