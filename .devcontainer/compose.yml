@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  dev:
+    image: mcr.microsoft.com/devcontainers/typescript-node:1-20-bookworm
+    volumes:
+      - ..:/workspace:cached
+    environment:
+      - MYSQL_URL=mysql://root:local@localhost 
+    command: sleep infinity
+
+  mysql:
+    image: mysql:9
+    restart: always
+    volumes:
+      - data:/var/lib/mysql 
+    environment:
+      MYSQL_ROOT_PASSWORD: local
+    network_mode: service:dev # this service uses the network stack of the dev service, allowing them to communicate via 'localhost'
+
+volumes:
+  data:
