@@ -1,4 +1,4 @@
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, Index, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Experience } from '../../experience/entities/experience.entity';
 import { TagCategory } from './tag-category.entity';
 
@@ -11,8 +11,11 @@ export class Tag {
   @Column({ unique: true })
   name: string;
 
+  @Column({ unique: true })
+  @Index()
+  slug: string;
+
   @ManyToMany(() => Experience, experience => experience.tags)
-  @JoinTable()
   experiences: Experience[];
 
   @OneToMany(() => Tag, tag => tag.aliasFor)
@@ -23,5 +26,8 @@ export class Tag {
 
   @ManyToOne(() => TagCategory, category => category.tags, { nullable: true })
   category: TagCategory;
+
+  @Column({ default: 1 })
+  priority: number;
 }
 

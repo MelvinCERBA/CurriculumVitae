@@ -5,6 +5,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Tag } from './entities/tag.entity';
 import { Repository } from 'typeorm';
 import { TagCategoryService } from './tag-category.service';
+import slugify from 'slugify';
+import { addAliasesToTagDto } from './dto/add-aliases-to-tag.dto';
 
 @Injectable()
 export class TagService {
@@ -18,7 +20,11 @@ export class TagService {
     return this.tagRepository.findOne({ where: { name } });
   }
 
-  async create({ name, categoryName }: CreateTagDto) {
+  async findById(id: number) {
+    return this.tagRepository.findOne({ where: { id } });
+  }
+
+  async create({ name, categoryName, aliases, aliasFor }: CreateTagDto) {
     let category = null;
 
     if (categoryName) {
@@ -27,8 +33,28 @@ export class TagService {
         throw new NotFoundException(`Tag category with name ${categoryName} not found : tag ${name} could not be created`);
       }
     }
-    const tag = this.tagRepository.create({ name, category });
-    return this.tagRepository.save(tag);
+
+    let aliasedTag = null;
+    if (aliasFor) {
+      aliasedTag = await this.findById(aliasFor);
+    }
+    const tag = this.tagRepository.create({ name, category, slug: slugify(name, { lower: true }), aliasFor: aliasedTag });
+
+    let savedTag = await this.tagRepository.save(tag);
+
+    if (!aliases) {
+      return savedTag;
+    }
+
+    const tags = await Promise.all(
+      aliases.map(async (name) => {
+        return this.getOrCreate({ name, aliasFor: savedTag.id });
+      })
+    );
+
+    savedTag.aliases = tags;
+    return this.tagRepository.save(savedTag);
+
   }
 
   async getOrCreate(createTagDto: CreateTagDto): Promise<Tag> {
@@ -39,19 +65,21 @@ export class TagService {
     return tag;
   }
 
-  // findAll() {
-  //   return `This action returns all tag`;
-  // }
+  async addAliasesToTag(dto: addAliasesToTagDto) {
+    const tag = await this.tagRepository.findOne({ where: { name: dto.name }, relations: ['aliases'] });
+    if (!tag) {
+      throw new NotFoundException(`Tag with name ${dto.name} not found : aliases ${dto.aliases} could not be appended.`);
+    }
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} tag`;
-  // }
+    const dtoAliasesTags = await Promise.all(dto.aliases.map(name => {
+      const new_tag = this.getOrCreate({ name });
+      return new_tag;
+    }));
 
-  // update(id: number, updateTagDto: UpdateTagDto) {
-  //   return `This action updates a #${id} tag`;
-  // }
+    const mergedAliases = Object.values([...tag.aliases, ...dtoAliasesTags].reduce((acc, tag) => { acc[tag.id] = tag; return acc }, {}))
 
-  // remove(id: number) {
-  //   return `This action removes a #${id} tag`;
-  // }
+    const newTag = { ...tag, aliases: mergedAliases };
+
+    return this.tagRepository.save(newTag);
+  }
 }

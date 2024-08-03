@@ -15,6 +15,8 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   app.useGlobalPipes(new ValidationPipe({
+    whitelist: true, // Ignore any properties that are not in the DTO
+    forbidNonWhitelisted: true, // Throw an error if a property is not in the DTO
     transform: true, // Enable transformation ()
   }));
   await app.listen(3000);

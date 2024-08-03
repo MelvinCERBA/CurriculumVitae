@@ -7,10 +7,22 @@
   - [x] ExperienceService.update(updateExperienceDto)
   - [x] ExperienceService.delete(deleteExperienceDto)
 
-## GET /experience
-- [ ] /experience?user=2&tags= 
-
 # search & autocompletion endpoints
-# CRUD on everything for admin
+## add tags w/ their aliases & categories
+- [x] slugcase tag name
+- [x] POST & PATCH /tag {name, aliases, categories}
+- [x] POST /tag/aliases {id, aliases} #TODO: ajouter aliases à un tag existant
+- [x] GET /tag-categories
+## POST /autocomplete-tag 
+{"tag":"machin"} => looks like "MachineLearning" -aliasFor-> "AI"` & "Machinery" => `["AI", "Machinery"]`
+- [ ] AutocompletionService.autocomple(start:string) : Tag[] 
 
-# Database calls ExceptionFilter
+# Error handling
+generalize handling of DataSourceErrors (eg. DataSourceErrors.DUPLICATED_ENTRY) -> ExceptionFilter
+
+# Tests
+Tests edge cases : try to create tests that fail
+
+# CRUD on everything for admin ?
+
+# Database calls ExceptionFilter ?

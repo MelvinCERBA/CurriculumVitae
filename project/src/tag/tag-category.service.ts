@@ -18,18 +18,22 @@ export class TagCategoryService {
   ) { }
 
   async create(createTagCategoryDto: CreateTagCategoryDto) {
+    let savedCategory = await this.tagCategoryRepository.save({
+      name: createTagCategoryDto.name,
+    });
+
+    if (!createTagCategoryDto.tags) {
+      return savedCategory;
+    }
+
     const tags = await Promise.all(
-      createTagCategoryDto.aliases.map(async name => {
-        const tag = await this.tagService.findByName(name);
-        if (!tag) {
-          throw new NotFoundException(`Tag with name ${name} not found : category ${createTagCategoryDto.name} could not be created`);
-        }
-        return tag;
+      createTagCategoryDto.tags.map(async name => {
+        return this.tagService.getOrCreate({ name, categoryName: createTagCategoryDto.name });
       })
     );
 
     return this.tagCategoryRepository.save({
-      name: createTagCategoryDto.name,
+      ...savedCategory,
       tags: tags
     });
   }
@@ -55,9 +59,13 @@ export class TagCategoryService {
     return this.tagCategoryRepository.findOne({ where: { name: category } });
   }
 
-  // findAll() {
-  //   return `This action returns all tag`;
-  // }
+  async findAll(): Promise<TagCategory[]> {
+    return this.tagCategoryRepository.find({
+      relations: {
+        tags: true
+      }
+    });
+  }
 
   // findOne(id: number) {
   //   return `This action returns a #${id} tag`;

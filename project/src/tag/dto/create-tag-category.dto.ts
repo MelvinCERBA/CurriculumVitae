@@ -1,5 +1,6 @@
-import { ArrayNotEmpty, IsArray, IsOptional, IsString } from "class-validator"
+import { ArrayNotEmpty, IsArray, IsOptional, IsString, ValidateNested } from "class-validator"
 import { TagCategory } from "../entities/tag-category.entity"
+import { Type } from "class-transformer"
 
 export class CreateTagCategoryDto {
   @IsString()
@@ -9,5 +10,7 @@ export class CreateTagCategoryDto {
   @IsArray()
   @ArrayNotEmpty()
   @IsString({ each: true })
-  aliases: string[]
+  tags: string[]
 }
+
+

@@ -10,8 +10,9 @@ export class UserResponseDto {
   experiences?: ExperienceResponseDto[]
 
   static fromEntity(entity: User): UserResponseDto {
+    const { passwordHash, ...dto } = entity
     return {
-      ...entity,
+      ...dto,
       experiences: entity.experiences?.map(experience => ExperienceResponseDto.fromEntity(experience))
     }
   }
