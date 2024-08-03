@@ -1,12 +1,12 @@
-import { IsInt, Max, Min } from "class-validator"
+import { IsInt, IsOptional, Max, Min } from "class-validator"
 
 export abstract class PaginatedDto {
   @IsInt()
   @Min(1)
   @Max(100)
-  limit: number
+  limit: number = 10
 
   @IsInt()
   @Min(1)
-  page: number
+  page: number = 1
 }

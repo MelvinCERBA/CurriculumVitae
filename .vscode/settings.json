@@ -10,4 +10,5 @@
     },
     "typescript.preferences.importModuleSpecifier": "relative",
     "javascript.preferences.importModuleSpecifier": "relative",
+    "prettier.printWidth": 80,
   }

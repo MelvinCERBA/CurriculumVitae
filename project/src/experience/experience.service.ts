@@ -3,9 +3,11 @@ import { CreateExperienceDto } from './dto/create-experience.dto';
 import { UpdateExperienceDto } from './dto/update-experience.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Experience } from './entities/experience.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { TagService } from '../tag/tag.service';
 import { UserService } from '../user/user.service';
+import { GetExperiencesDto } from './dto/get-experiences.dto';
+import { PaginatedResponseDto } from '../common/dto/paginated-response.dto';
 
 @Injectable()
 export class ExperienceService {
@@ -72,6 +74,18 @@ export class ExperienceService {
 
   async remove(id: number) {
     return this.experienceRepository.delete({ id });
+  }
+
+  async search(dto: GetExperiencesDto): Promise<[Experience[], number]> {
+    return this.experienceRepository.findAndCount({
+      where: {
+        ...(dto.userId && { user: { id: dto.userId } }),
+        ... (dto.tagNames && { tags: { name: In(dto.tagNames) } })
+      },
+      take: dto.limit,
+      skip: (dto.page - 1) * dto.limit,
+      relations: ['tags', 'user'],
+    });
   }
 }
 

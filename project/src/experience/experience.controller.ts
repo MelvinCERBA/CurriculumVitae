@@ -3,28 +3,26 @@ import { ExperienceService } from './experience.service';
 import { CreateExperienceDto } from './dto/create-experience.dto';
 import { UpdateExperienceDto } from './dto/update-experience.dto';
 import { AuthenticationGuard } from '../authentication/authentication.guard';
-import { GetExperiencesDto, GetExperiencesResponseDto } from './dto/get-experiences.dto';
+import { ExperienceResponseDto, GetExperiencesDto } from './dto/get-experiences.dto';
+import { PaginatedResponseDto } from '../common/dto/paginated-response.dto';
+import { paginateResponse } from '../common/utils/pagination.utils';
+import { Public } from '../authentication/public.guard';
 
 @Controller('experience')
 export class ExperienceController {
   constructor(private readonly experienceService: ExperienceService) { }
 
-  @Post() @UseGuards(AuthenticationGuard)
-  create(@Req() req, @Body() createExperienceDto: CreateExperienceDto) {
+  @Post()
+  async create(@Req() req, @Body() createExperienceDto: CreateExperienceDto): Promise<ExperienceResponseDto> {
     if (req.user.sub !== createExperienceDto.userId) {
       throw new UnauthorizedException("You are not authorized to create experiences for others");
     }
-    return this.experienceService.create(createExperienceDto);
+    return ExperienceResponseDto.fromEntity(await this.experienceService.create(createExperienceDto));
   }
 
-  @Get()
-  findAll(@Query() params: GetExperiencesDto): GetExperiencesResponseDto {
-    return {
-      data: [],
-      total: 0,
-      current_page: 1,
-      limit: 10
-    };
+  @Post('search')
+  async findAll(@Body() dto: GetExperiencesDto): Promise<PaginatedResponseDto<ExperienceResponseDto>> {
+    return paginateResponse(await this.experienceService.search(dto), dto.page, dto.limit);
   }
 
   // @Get(':id')
@@ -33,8 +31,9 @@ export class ExperienceController {
   // }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateExperienceDto: UpdateExperienceDto) {
-    return this.experienceService.update(+id, updateExperienceDto);
+  async update(@Param('id') id: string, @Body() updateExperienceDto: UpdateExperienceDto): Promise<ExperienceResponseDto> {
+    const { user, ...res } = await this.experienceService.update(+id, updateExperienceDto);
+    return res
   }
 
   @Delete(':id')

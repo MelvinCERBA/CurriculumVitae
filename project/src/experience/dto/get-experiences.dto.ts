@@ -6,29 +6,33 @@ import { CreateTagDto } from '../../tag/dto/create-tag.dto';
 import { PaginatedDto } from '../../common/dto/paginated.dto';
 import { PaginatedResponseDto } from '../../common/dto/paginated-response.dto';
 import { Experience } from '../entities/experience.entity';
+import { UserResponseDto } from '../../user/dto/user-response.dto';
+import { TagResponseDto } from '../../tag/dto/tag-response.dto';
 
 export class GetExperiencesDto extends PaginatedDto {
-  @IsString()
+  @IsNumber()
   @IsOptional()
-  pictureUrl?: string
-
-  @IsString()
-  @IsOptional()
-  title?: string
-
-  @IsString()
-  @IsOptional()
-  description?: string
-
-  @IsString()
-  @IsOptional()
-  link?: string
+  userId: number
 
   @IsArray()
   @IsOptional()
   tagNames?: CreateTagDto[]
 }
 
-export type ExperiencesResponseDto = Experience;
+export class ExperienceResponseDto {
+  id: number
+  pictureUrl: string
+  title: string
+  description: string
+  link: string
+  tags: TagResponseDto[]
+  user?: UserResponseDto
 
-export class GetExperiencesResponseDto extends PaginatedResponseDto<ExperiencesResponseDto> { }
+  static fromEntity(entity: Experience): ExperienceResponseDto {
+    return {
+      ...entity,
+      tags: entity.tags.map(tag => TagResponseDto.fromEntity(tag)),
+      user: entity.user ? UserResponseDto.fromEntity(entity.user) : undefined,
+    }
+  }
+};

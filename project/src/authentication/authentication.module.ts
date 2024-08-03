@@ -6,9 +6,17 @@ import { UserModule } from '../user/user.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 import { AuthenticationGuard } from './authentication.guard';
+import { APP_GUARD } from '@nestjs/core';
 @Module({
   controllers: [AuthenticationController],
-  providers: [AuthenticationService, AuthenticationGuard],
+  providers: [
+    AuthenticationService,
+    AuthenticationGuard,
+    {
+      provide: APP_GUARD,
+      useClass: AuthenticationGuard,
+    }
+  ],
   imports: [
     forwardRef(() => UserModule),
     ConfigModule,
@@ -23,6 +31,6 @@ import { AuthenticationGuard } from './authentication.guard';
       inject: [ConfigService],
     }),
   ],
-  exports: [JwtModule]
+  exports: [JwtModule, AuthenticationGuard]
 })
 export class AuthenticationModule { }
