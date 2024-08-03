@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Experience } from '../../experience/entities/experience.entity';
 
 @Entity()
 export class User {
@@ -6,10 +7,10 @@ export class User {
   id: number;
 
   @Column()
-  first_name: string;
+  firstName: string;
 
   @Column()
-  last_name: string;
+  lastName: string;
 
   @Column({ nullable: true })
   description: string;
@@ -19,4 +20,7 @@ export class User {
 
   @Column()
   passwordHash: string;
+
+  @OneToMany(() => Experience, experience => experience.user)
+  experiences: Experience[];
 }

@@ -1,6 +1,7 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
-import { LogInDto } from './dto/LogInDto';
+import { LogInDto, LogInResponseDto } from './dto/LogInDto';
 import { AuthenticationService } from './authentication.service';
+import { Public } from './public.guard';
 
 @Controller('authentication')
 export class AuthenticationController {
@@ -8,7 +9,8 @@ export class AuthenticationController {
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  logIn(@Body() signInDto: LogInDto) {
+  @Public()
+  async logIn(@Body() signInDto: LogInDto): Promise<LogInResponseDto> {
     return this.authService.logIn(signInDto);
   }
 }

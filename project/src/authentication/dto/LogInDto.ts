@@ -6,3 +6,8 @@ export class LogInDto {
   @IsString()
   password: string;
 }
+
+export class LogInResponseDto {
+  userId: number;
+  token: string;
+}

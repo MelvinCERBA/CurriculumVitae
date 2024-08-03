@@ -4,12 +4,13 @@ import { UserService } from './user.service';
 import { DataSourceErrors } from '../error/datasourceErrors.enum';
 import { AuthenticationGuard } from '../authentication/authentication.guard';
 import { request } from 'express';
+import { Public } from '../authentication/public.guard';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) { }
 
-  @Post() @HttpCode(HttpStatus.CREATED)
+  @Post() @Public() @HttpCode(HttpStatus.CREATED)
   async create(@Body() createUserDto: CreateUserDto) {
     try {
       const { passwordHash: _, ...user } = await this.userService.create(createUserDto);
@@ -27,7 +28,7 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthenticationGuard)
   async getProfile(@Req() { user }) {
-    const { passwordHash: _, ...profile } = await this.userService.findOne(user.email);
+    const { passwordHash: _, ...profile } = await this.userService.findOneByEmail(user.email);
     return profile;
   }
 }

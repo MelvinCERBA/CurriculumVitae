@@ -5,12 +5,24 @@ import { Observable } from 'rxjs';
 import { IncomingHttpHeaders } from 'http';
 import { JwtPayload } from './interfaces/jwtPayload.interface';
 import { Request } from 'express';
+import { Reflector } from '@nestjs/core';
+import { IS_PUBLIC_KEY } from './public.guard';
 
 @Injectable()
 export class AuthenticationGuard implements CanActivate {
-  constructor(private jwtService: JwtService, private configService: ConfigService) { }
+  constructor(
+    private reflector: Reflector,
+    private jwtService: JwtService,
+    private configService: ConfigService
+  ) { }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+    if (isPublic) return true;
+
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
     if (!token) {

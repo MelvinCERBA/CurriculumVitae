@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/co
 import { ConfigService } from '@nestjs/config';
 import EnvironmentVariables from 'config/env';
 import { compare } from 'bcrypt';
-import { LogInDto } from './dto/LogInDto';
+import { LogInDto, LogInResponseDto } from './dto/LogInDto';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './interfaces/jwtPayload.interface';
@@ -15,8 +15,8 @@ export class AuthenticationService {
     private jwtService: JwtService,
   ) { }
 
-  async logIn({ email, password }: LogInDto): Promise<any> {
-    const user = await this.usersService.findOne(email);
+  async logIn({ email, password }: LogInDto): Promise<LogInResponseDto> {
+    const user = await this.usersService.findOneByEmail(email);
     if (!user) {
       throw new NotFoundException(`No user with email ${email}.`);
     }
@@ -25,7 +25,8 @@ export class AuthenticationService {
     }
     const payload: JwtPayload = { sub: user.id, email: user.email };
     return {
-      access_token: await this.jwtService.signAsync(payload),
+      userId: user.id,
+      token: await this.jwtService.signAsync(payload),
     };
   }
 }
