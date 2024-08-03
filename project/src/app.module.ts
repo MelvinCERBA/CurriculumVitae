@@ -6,6 +6,8 @@ import { AuthenticationModule } from './authentication/authentication.module';
 import { ConfigModule } from '@nestjs/config';
 import { ExperienceModule } from './experience/experience.module';
 import { TagModule } from './tag/tag.module';
+import { AutocompletionService } from './autocompletion/autocompletion.service';
+import { AutocompletionModule } from './autocompletion/autocompletion.module';
 
 @Module({
   imports: [
@@ -19,6 +21,8 @@ import { TagModule } from './tag/tag.module';
     AuthenticationModule,
     ExperienceModule,
     TagModule,
+    AutocompletionModule,
   ],
+  providers: [AutocompletionService],
 })
 export class AppModule { }

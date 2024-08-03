@@ -1,10 +1,12 @@
-import { Controller, Post, Body, HttpException, HttpStatus, HttpCode, Param, Get, UseGuards, Req } from '@nestjs/common';
+import { Controller, Post, Body, HttpException, HttpStatus, HttpCode, Param, Get, UseGuards, Req, Patch } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
 import { DataSourceErrors } from '../error/datasourceErrors.enum';
 import { AuthenticationGuard } from '../authentication/authentication.guard';
 import { request } from 'express';
 import { Public } from '../authentication/public.guard';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UserResponseDto } from './dto/user-response.dto';
 
 @Controller('user')
 export class UserController {
@@ -28,7 +30,15 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthenticationGuard)
   async getProfile(@Req() { user }) {
-    const { passwordHash: _, ...profile } = await this.userService.findOneByEmail(user.email);
-    return profile;
+    const profile = await this.userService.findOneByEmail(user.email);
+    return UserResponseDto.fromEntity(profile);
+  }
+
+  @Patch('profile')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthenticationGuard)
+  async patchProfile(@Req() { user }, @Body() dto: UpdateUserDto): Promise<UserResponseDto> {
+    const profile = await this.userService.update(user.sub, dto);
+    return UserResponseDto.fromEntity(profile);
   }
 }

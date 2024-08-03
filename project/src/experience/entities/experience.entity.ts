@@ -19,20 +19,10 @@ export class Experience {
   @Column({ nullable: true })
   link: string
 
-  @ManyToMany(type => Tag, tag => tag.experiences)
-  @JoinTable({
-    name: 'experience_tag',
-    joinColumn: {
-      name: 'experience_id',
-      referencedColumnName: 'id'
-    },
-    inverseJoinColumn: {
-      name: 'tag_id',
-      referencedColumnName: 'id'
-    }
-  })
+  @ManyToMany(type => Tag, tag => tag.experiences, { onDelete: 'CASCADE', cascade: true })
+  @JoinTable()
   tags: Tag[]
 
-  @ManyToOne(() => User, user => user.experiences, { nullable: false })
+  @ManyToOne(() => User, user => user.experiences, { nullable: false, onDelete: 'CASCADE' })
   user: User;
 }
