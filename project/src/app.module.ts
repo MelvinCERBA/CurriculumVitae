@@ -4,6 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from './datasource';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { ConfigModule } from '@nestjs/config';
+import { ExperienceModule } from './experience/experience.module';
+import { TagModule } from './tag/tag.module';
 
 @Module({
   imports: [
@@ -15,6 +17,8 @@ import { ConfigModule } from '@nestjs/config';
     }),
     UserModule,
     AuthenticationModule,
+    ExperienceModule,
+    TagModule,
   ],
 })
 export class AppModule {}
