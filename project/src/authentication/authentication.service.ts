@@ -5,6 +5,7 @@ import { compare } from 'bcrypt';
 import { LogInDto } from './dto/LogInDto';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
+import { JwtPayload } from './interfaces/jwtPayload.interface';
 
 @Injectable()
 export class AuthenticationService {
@@ -22,7 +23,7 @@ export class AuthenticationService {
     if (!(user?.passwordHash) || !(await compare(password, user.passwordHash))) {
       throw new UnauthorizedException();
     }
-    const payload = { sub: user.id, email: user.email };
+    const payload: JwtPayload = { sub: user.id, email: user.email };
     return {
       access_token: await this.jwtService.signAsync(payload),
     };

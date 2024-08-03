@@ -8,6 +8,7 @@ import { log } from 'console';
 
 @Injectable()
 export class UserService {
+
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
@@ -27,4 +28,5 @@ export class UserService {
   async findOne(email: string) {
     return this.userRepository.findOneBy({ email });
   }
+
 }
