@@ -1,30 +1,77 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateExperienceDto } from './dto/create-experience.dto';
 import { UpdateExperienceDto } from './dto/update-experience.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Experience } from './entities/experience.entity';
 import { Repository } from 'typeorm';
+import { TagService } from '../tag/tag.service';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class ExperienceService {
 
-  // constructor(
-  //   @InjectRepository(Experience) experienceRepository: Repository<Experience>
-  // ) { }
-  // create(createExperienceDto: CreateExperienceDto) {
-  //   return 'This action adds a new experience';
-  // }
+  constructor(
+    @InjectRepository(Experience)
+    private readonly experienceRepository: Repository<Experience>,
+    private readonly tagService: TagService,
+    private readonly userService: UserService
+  ) { }
+
+  async create(dto: CreateExperienceDto) {
+    const tagsEnts = await Promise.all(dto.tags.map(async (createTagDto) => {
+      return this.tagService.getOrCreate(createTagDto);
+    }));
+
+    const user = await this.userService.findOneById(dto.userId)
+    if (!user) {
+      throw new NotFoundException(`User with ID ${dto.userId} not found`);
+    }
+
+    const experience = this.experienceRepository.create({
+      ...dto,
+      tags: tagsEnts,
+      user: user
+    });
+
+    return this.experienceRepository.save(experience);
+  }
 
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} experience`;
-  // }
+  async findByUser(userId: number) {
+    return this.experienceRepository.find({ where: { user: { id: userId } } });
+  }
 
-  // update(id: number, updateExperienceDto: UpdateExperienceDto) {
-  //   return `This action updates a #${id} experience`;
-  // }
+  async update(id: number, updateExperienceDto: UpdateExperienceDto) {
+    const experience = await this.experienceRepository.findOne({
+      where: { id: id },
+      relations: ['tags', 'user'],
+    });
 
-  // remove(id: number) {
-  //   return `This action removes a #${id} experience`;
-  // }
+    if (!experience) {
+      throw new NotFoundException(`Experience with ID ${id} not found`);
+    }
+
+    let tags = experience.tags;
+    if (updateExperienceDto.tagNames) {
+      tags = await Promise.all(updateExperienceDto.tagNames.map(async ({ name, categoryName }) => {
+        return this.tagService.getOrCreate({ name, categoryName });
+      }));
+    }
+
+    const newExperience: Experience = {
+      ...experience,
+      ...(updateExperienceDto.pictureUrl !== undefined && { pictureUrl: updateExperienceDto.pictureUrl }),
+      ...(updateExperienceDto.title !== undefined && { title: updateExperienceDto.title }),
+      ...(updateExperienceDto.description !== undefined && { description: updateExperienceDto.description }),
+      ...(updateExperienceDto.link !== undefined && { link: updateExperienceDto.link }),
+      tags: tags
+    };
+
+    return this.experienceRepository.save(newExperience);
+  }
+
+  async remove(id: number) {
+    return this.experienceRepository.delete({ id });
+  }
 }
+

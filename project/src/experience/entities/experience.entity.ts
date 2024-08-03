@@ -1,5 +1,6 @@
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Tag } from "../../tag/entities/tag.entity";
+import { User } from "../../user/entities/user.entity";
 
 @Entity()
 export class Experience {
@@ -7,7 +8,7 @@ export class Experience {
   id: number
 
   @Column({ nullable: true })
-  picture_url: string
+  pictureUrl: string
 
   @Column()
   title: string
@@ -31,4 +32,7 @@ export class Experience {
     }
   })
   tags: Tag[]
+
+  @ManyToOne(() => User, user => user.experiences, { nullable: false })
+  user: User;
 }

@@ -1,10 +1,15 @@
-import { IsArray, IsOptional, IsString } from "class-validator"
+import { IsArray, IsNumber, IsOptional, IsString, ValidateNested } from "class-validator"
 import { Tag } from "../../tag/entities/tag.entity"
+import { CreateTagDto } from "../../tag/dto/create-tag.dto"
+import { Type } from "class-transformer"
 
 export class CreateExperienceDto {
+  @IsNumber()
+  userId: number
+
   @IsString()
   @IsOptional()
-  picture_url: string
+  pictureUrl: string
 
   @IsString()
   title: string
@@ -16,7 +21,9 @@ export class CreateExperienceDto {
   @IsOptional()
   link: string
 
-  @IsArray()
   @IsOptional()
-  tags: Tag[]
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateTagDto)
+  tags: CreateTagDto[]
 }

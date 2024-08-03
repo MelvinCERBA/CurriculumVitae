@@ -25,8 +25,12 @@ export class UserService {
     });
   }
 
-  async findOne(email: string) {
+  async findOneByEmail(email: string) {
     return this.userRepository.findOneBy({ email });
+  }
+
+  async findOneById(id: number) {
+    return this.userRepository.findOneBy({ id });
   }
 
 }

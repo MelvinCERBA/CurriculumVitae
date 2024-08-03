@@ -21,4 +21,4 @@ import { TagModule } from './tag/tag.module';
     TagModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }

@@ -27,7 +27,7 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthenticationGuard)
   async getProfile(@Req() { user }) {
-    const { passwordHash: _, ...profile } = await this.userService.findOne(user.email);
+    const { passwordHash: _, ...profile } = await this.userService.findOneByEmail(user.email);
     return profile;
   }
 }

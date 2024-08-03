@@ -16,7 +16,7 @@ export class AuthenticationService {
   ) { }
 
   async logIn({ email, password }: LogInDto): Promise<any> {
-    const user = await this.usersService.findOne(email);
+    const user = await this.usersService.findOneByEmail(email);
     if (!user) {
       throw new NotFoundException(`No user with email ${email}.`);
     }
