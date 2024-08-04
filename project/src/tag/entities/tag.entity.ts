@@ -12,7 +12,6 @@ export class Tag {
   name: string;
 
   @Column({ unique: true })
-  @Index()
   slug: string;
 
   @ManyToMany(() => Experience, experience => experience.tags)
