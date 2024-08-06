@@ -26,12 +26,18 @@ export class UserService {
     });
   }
 
-  async findOneByEmail(email: string) {
-    return this.userRepository.findOneBy({ email });
+  async findOneByEmail(email: string, options = {}) {
+    return this.userRepository.findOne({
+      where: { email },
+      ...options,
+    });
   }
 
-  async findOneById(id: number) {
-    return this.userRepository.findOneBy({ id });
+  async findOneById(id: number, options = {}) {
+    return this.userRepository.findOne({
+      where: { id },
+      ...options,
+    });
   }
 
   async update(id: number, dto: UpdateUserDto) {

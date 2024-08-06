@@ -22,7 +22,9 @@ export class ExperienceController {
 
   @Post('search')
   async findAll(@Body() dto: GetExperiencesDto): Promise<PaginatedResponseDto<ExperienceResponseDto>> {
-    return paginateResponse(await this.experienceService.search(dto), dto.page, dto.limit);
+    const [experiences, total] = await this.experienceService.search(dto)
+    const expDtos = experiences.map(experience => ExperienceResponseDto.fromEntity(experience))
+    return paginateResponse([expDtos, total], dto.page, dto.limit);
   }
 
   // @Get(':id')

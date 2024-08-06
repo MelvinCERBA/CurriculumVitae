@@ -26,11 +26,11 @@ export class UserController {
     }
   }
 
-  @Get('profile')
+  @Get('profile/:id')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthenticationGuard)
-  async getProfile(@Req() { user }) {
-    const profile = await this.userService.findOneByEmail(user.email);
+  async getProfile(@Param("id") { id }) {
+    const profile = await this.userService.findOneById(id, { relations: ['experiences', 'experiences.tags'] });
     return UserResponseDto.fromEntity(profile);
   }
 

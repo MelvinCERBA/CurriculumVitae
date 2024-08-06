@@ -4,7 +4,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { cors: true });
 
   const config = new DocumentBuilder()
     .setTitle('Curriculum Vitae API')
@@ -19,6 +19,8 @@ async function bootstrap() {
     forbidNonWhitelisted: true, // Throw an error if a property is not in the DTO
     transform: true, // Enable transformation ()
   }));
+
+
   await app.listen(3000);
 }
 bootstrap();
