@@ -16,7 +16,7 @@ export class GetExperiencesDto extends PaginatedDto {
 
   @IsArray()
   @IsOptional()
-  tagNames?: CreateTagDto[]
+  tagNames?: string[]
 }
 
 export class ExperienceResponseDto {
@@ -31,7 +31,7 @@ export class ExperienceResponseDto {
   static fromEntity(entity: Experience): ExperienceResponseDto {
     return {
       ...entity,
-      tags: entity.tags.map(tag => TagResponseDto.fromEntity(tag)),
+      tags: entity.tags?.map(tag => TagResponseDto.fromEntity(tag)),
       user: entity.user ? UserResponseDto.fromEntity(entity.user) : undefined,
     }
   }

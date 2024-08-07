@@ -77,15 +77,32 @@ export class ExperienceService {
   }
 
   async search(dto: GetExperiencesDto): Promise<[Experience[], number]> {
-    return this.experienceRepository.findAndCount({
-      where: {
-        ...(dto.userId && { user: { id: dto.userId } }),
-        ... (dto.tagNames && { tags: { name: In(dto.tagNames) } })
-      },
-      take: dto.limit,
-      skip: (dto.page - 1) * dto.limit,
-      relations: ['tags', 'user'],
-    });
+    const query = this.experienceRepository.createQueryBuilder('experience')
+      .leftJoinAndSelect('experience.tags', 'tag')
+      .leftJoinAndSelect('experience.user', 'user')
+      .take(dto.limit)
+      .skip((dto.page - 1) * dto.limit);
+
+    if (dto.userId) {
+      query.andWhere('experience.user.id = :userId', { userId: dto.userId });
+    }
+
+    if (dto.tagNames && dto.tagNames.length > 0) {
+      query.andWhere('tag.name IN (:...tagNames)', { tagNames: dto.tagNames });
+    }
+
+    const [experiences, count] = await query.getManyAndCount();
+
+    // Ensure all tags are fully loaded for these experiences
+    for (const experience of experiences) {
+      experience.tags = await this.experienceRepository
+        .createQueryBuilder('experience')
+        .relation(Experience, 'tags')
+        .of(experience.id)
+        .loadMany();
+    }
+
+    return [experiences, count];
   }
 }
 

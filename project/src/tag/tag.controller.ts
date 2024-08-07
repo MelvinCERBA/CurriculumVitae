@@ -7,6 +7,7 @@ import { CreateTagCategoryDto } from './dto/create-tag-category.dto';
 import { TagCategoryResponseDto } from './dto/tag-category-response.dto';
 import { TagCategoryService } from './tag-category.service';
 import { addAliasesToTagDto } from './dto/add-aliases-to-tag.dto';
+import { Public } from '../authentication/public.guard';
 
 @Controller('tag')
 export class TagController {
@@ -27,10 +28,11 @@ export class TagController {
 
   @Post('category')
   async createTagCategory(@Body() dto: CreateTagCategoryDto): Promise<TagCategoryResponseDto> {
+
     return this.tagCategoryService.create(dto);
   }
 
-  @Get('category')
+  @Get('category') @Public()
   async getCategories(): Promise<TagCategoryResponseDto[]> {
     const categories = await this.tagCategoryService.findAll();
     return categories.map(c => TagCategoryResponseDto.fromEntity(c));
