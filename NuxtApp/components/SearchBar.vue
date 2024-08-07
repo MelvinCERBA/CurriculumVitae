@@ -4,6 +4,7 @@ import { useRuntimeConfig } from "#app";
 
 const props = defineProps<{
   tags: string[];
+  toggleTag: (tag: string) => void;
 }>();
 
 const config = useRuntimeConfig();
@@ -11,15 +12,8 @@ const { data: categories, error } = await useFetch<TagCategoryResponseDto[]>(
   `http://localhost:3000/tag/category`
 );
 
-function applyTag(tag: string) {
-  if (!props.tags.includes(tag)) {
-    props.tags.push(tag);
-    input.value = null;
-  }
-}
-
 const suggestion: Ref<string[]> = ref([]);
-const input = ref(null);
+const input = ref("");
 
 watchEffect(async () => {
   if (input.value) {
@@ -32,24 +26,35 @@ watchEffect(async () => {
         },
       }
     );
-    suggestion.value = suggestedTags.map(
-      (tag: TagResponseDto): string => tag.name
-    );
+    suggestion.value = suggestedTags
+      .map((tag: TagResponseDto): string => tag.name)
+      .slice(0, 3)
+      .filter((sug) => !props.tags.includes(sug));
     console.log(suggestion.value);
     return;
   }
   suggestion.value = [];
 });
+function emptyAndToggleTag(tag: string) {
+  input.value = "";
+  props.toggleTag(tag);
+}
 </script>
 
 <template>
   <div class="searchbar">
     <div class="tags-bar shadow">
-      <p v-for="tag in props.tags" class="tag">{{ tag }}</p>
+      <p
+        v-for="tag in props.tags"
+        class="tag"
+        @click.prevent="emptyAndToggleTag(tag)"
+      >
+        {{ tag }}
+      </p>
       <p
         v-for="tag in suggestion"
         class="suggested-tag"
-        @click.prevent="applyTag(tag)"
+        @click.prevent="emptyAndToggleTag(tag)"
       >
         {{ tag }}
       </p>
@@ -59,7 +64,7 @@ watchEffect(async () => {
         v-model="input"
       />
     </div>
-    <div v-if="error" class="tag-groups">{{ error }}</div>
+    <!-- <div v-if="error" class="tag-groups">{{ error }}</div> -->
     <!-- <div v-else-if="categories" class="tag-groups">
       <div
         v-for="category in categories"
@@ -73,6 +78,7 @@ watchEffect(async () => {
 </template>
 
 <style scoped lang="scss">
+@use "@/assets/styles/colors.scss";
 .searchbar {
   display: flex;
   flex-direction: column;
@@ -109,8 +115,8 @@ watchEffect(async () => {
   > .tag {
     padding: 2px 10px;
     border-radius: 15px;
-    border: 1px solid gray;
-    color: gray;
+    border: 1px solid colors.$primary;
+    color: colors.$primary;
     margin-right: 5px;
 
     &::before {
@@ -126,7 +132,7 @@ watchEffect(async () => {
     padding: 1px 5px;
     margin-right: 2px;
     border-radius: 15px;
-    color: gray;
+    color: colors.$primary-active;
 
     &::before {
       content: "#";

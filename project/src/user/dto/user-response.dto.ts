@@ -7,6 +7,7 @@ export class UserResponseDto {
   lastName: string
   email: string
   description: string
+  pictureUrl: string | null
   experiences?: ExperienceResponseDto[]
   tags: string[]
 

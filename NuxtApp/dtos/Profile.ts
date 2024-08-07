@@ -1,3 +1,4 @@
+import type { ExperienceResponseDto } from "./Experiences"
 import type { TagResponseDto } from "./Tag"
 
 export interface ProfileResponseDto {
@@ -5,6 +6,8 @@ export interface ProfileResponseDto {
   email: string
   firstName: string
   lastName: string
-  description: string
-  tags: TagResponseDto[]
+  description: string | null
+  pictureUrl: string
+  tags: string[]
+  experiences?: ExperienceResponseDto[]
 }

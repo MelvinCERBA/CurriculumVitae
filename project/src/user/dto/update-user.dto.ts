@@ -15,6 +15,11 @@ export class UpdateUserDto {
 
   @IsOptional()
   @IsString()
+  @IsNotEmpty()
+  pictureUrl: string;
+
+  @IsOptional()
+  @IsString()
   description: string;
 
   @IsOptional()

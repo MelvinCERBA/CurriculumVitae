@@ -16,7 +16,7 @@ export class GetExperiencesDto extends PaginatedDto {
 
   @IsArray()
   @IsOptional()
-  tagNames?: CreateTagDto[]
+  tagNames?: string[]
 }
 
 export class ExperienceResponseDto {

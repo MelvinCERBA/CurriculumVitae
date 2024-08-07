@@ -13,6 +13,9 @@ export class User {
   lastName: string;
 
   @Column({ nullable: true })
+  pictureUrl: string | null;
+
+  @Column({ nullable: true })
   description: string;
 
   @Column({ unique: true })

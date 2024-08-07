@@ -12,6 +12,8 @@ import { Public } from '../authentication/public.guard';
 export class ExperienceController {
   constructor(private readonly experienceService: ExperienceService) { }
 
+
+
   @Post()
   async create(@Req() req, @Body() createExperienceDto: CreateExperienceDto): Promise<ExperienceResponseDto> {
     if (req.user.sub !== createExperienceDto.userId) {
@@ -20,7 +22,7 @@ export class ExperienceController {
     return ExperienceResponseDto.fromEntity(await this.experienceService.create(createExperienceDto));
   }
 
-  @Post('search')
+  @Post('search') @Public()
   async findAll(@Body() dto: GetExperiencesDto): Promise<PaginatedResponseDto<ExperienceResponseDto>> {
     const [experiences, total] = await this.experienceService.search(dto)
     const expDtos = experiences.map(experience => ExperienceResponseDto.fromEntity(experience))

@@ -1,60 +1,54 @@
 <script lang="ts" setup>
+import type { ProfileResponseDto } from "../dtos/Profile";
+
 const tags: Ref<string[]> = ref([]);
+const {
+  data: users,
+  error,
+  refresh,
+} = await useAsyncData<ProfileResponseDto[]>("users", () =>
+  useApi<ProfileResponseDto[]>("/user/profile", {
+    method: "POST",
+    body: { tags: tags.value },
+  })
+);
+
+watch(
+  tags,
+  async () => {
+    console.log("newUsers ?");
+    const newUsers = await useApi<ProfileResponseDto[]>("/user/profile", {
+      method: "POST",
+      body: { tags: tags.value },
+    });
+    console.log(newUsers.map((user) => user.email));
+    users.value = newUsers;
+  },
+  { deep: true }
+);
+
+function toggleTag(tag: string) {
+  if (!tags.value.includes(tag)) {
+    tags.value.push(tag);
+    return;
+  }
+  tags.value = tags.value.filter((t) => t !== tag);
+}
 </script>
 
 <template>
   <h1>Search a talent</h1>
   <div class="profile-catalogue">
-    <SearchBar :tags="tags" />
+    <SearchBar :tags="tags" :toggleTag="toggleTag" />
     <div class="profiles-list">
-      <div class="profile-card clickable">
-        <div class="profile-picture">
-          <img
-            src="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50"
-          />
-        </div>
-        <div class="profile-info">
-          <h2 class="profile-name">John Doe</h2>
-          <p class="profile-description">Developer</p>
-          <div class="profile-tags">
-            <div class="tag shadow">Javascript</div>
-            <div class="tag shadow">Python</div>
-            <div class="tag shadow">Ruby</div>
-          </div>
-        </div>
-      </div>
-      <div class="profile-card clickable">
-        <div class="profile-picture">
-          <img
-            src="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50"
-          />
-        </div>
-        <div class="profile-info">
-          <h2 class="profile-name">John Doe</h2>
-          <p class="profile-description">Developer</p>
-          <div class="profile-tags">
-            <div class="tag shadow">Javascript</div>
-            <div class="tag shadow">Python</div>
-            <div class="tag shadow">Ruby</div>
-          </div>
-        </div>
-      </div>
-      <div class="profile-card clickable">
-        <div class="profile-picture">
-          <img
-            src="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50"
-          />
-        </div>
-        <div class="profile-info">
-          <h2 class="profile-name">John Doe</h2>
-          <p class="profile-description">Developer</p>
-          <div class="profile-tags">
-            <div class="tag shadow">Javascript</div>
-            <div class="tag shadow">Python</div>
-            <div class="tag shadow">Ruby</div>
-          </div>
-        </div>
-      </div>
+      <ProfileCard
+        v-for="user in users"
+        :key="user.id"
+        :user="user"
+        :tags="tags"
+        :toggleTag="toggleTag"
+        :clickable="true"
+      />
     </div>
   </div>
 </template>
@@ -67,52 +61,5 @@ const tags: Ref<string[]> = ref([]);
   flex-direction: column;
   align-items: stretch;
   gap: 20px;
-}
-
-.profile-card {
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
-  padding: 20px;
-  gap: 50px;
-  border-radius: 30px;
-
-  &:hover {
-    box-shadow: 0 0 10px lightgray;
-  }
-}
-
-.profile-tags {
-  margin-top: auto;
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 5px;
-}
-
-.tag {
-  padding: 2px 10px;
-  border-radius: 15px;
-  border: 1px solid lightgray;
-  color: gray;
-
-  &::before {
-    content: "#";
-  }
-}
-
-.profile-info {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 5px;
-}
-
-.profile-picture {
-  img {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-  }
 }
 </style>

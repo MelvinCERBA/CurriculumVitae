@@ -7,6 +7,7 @@ import { request } from 'express';
 import { Public } from '../authentication/public.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserResponseDto } from './dto/user-response.dto';
+import { ProfilesDto } from './dto/profiles.dto';
 
 @Controller('user')
 export class UserController {
@@ -28,17 +29,25 @@ export class UserController {
 
   @Get('profile/:id')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthenticationGuard)
-  async getProfile(@Param("id") { id }) {
+  @Public()
+  async getOneProfile(@Param("id") id: number) {
     const profile = await this.userService.findOneById(id, { relations: ['experiences', 'experiences.tags'] });
     return UserResponseDto.fromEntity(profile);
   }
 
-  @Patch('profile')
+  @Post('profile')
+  @HttpCode(HttpStatus.OK)
+  @Public()
+  async getProfiles(@Body() { tags }: ProfilesDto) {
+    const users = await this.userService.findUsersByTags(tags);
+    return users.map(profile => UserResponseDto.fromEntity(profile));
+  }
+
+  @Patch('profile/:id')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthenticationGuard)
-  async patchProfile(@Req() { user }, @Body() dto: UpdateUserDto): Promise<UserResponseDto> {
-    const profile = await this.userService.update(user.sub, dto);
+  async patchProfile(@Param("id") userId, @Body() dto: UpdateUserDto): Promise<UserResponseDto> {
+    const profile = await this.userService.update(userId, dto);
     return UserResponseDto.fromEntity(profile);
   }
 }
