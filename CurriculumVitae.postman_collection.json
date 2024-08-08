@@ -1,0 +1,720 @@
+{
+	"info": {
+		"_postman_id": "5f329896-c5f4-4978-b86b-e625fb8d45c9",
+		"name": "CurriculumVitae",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32765804"
+	},
+	"item": [
+		{
+			"name": "authentication",
+			"item": [
+				{
+					"name": "login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"token\", pm.response.json().token);\r",
+									"pm.collectionVariables.set(\"userId\", pm.response.json().userId);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"melvin.cerba@gmail.com\",\r\n    \"password\":\"helloWorld\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/authentication/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"authentication",
+								"login"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "login",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\":\"melvin.cerba@gmail.com\",\r\n    \"password\":\"helloWorld\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/authentication/login",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"authentication",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "206"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"ce-XiWlsKvqTJdM2o56zhG8++c9B1Y\""
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 03 Aug 2024 21:07:31 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"userId\": 1,\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoibWVsdmluLmNlcmJhQGdtYWlsLmNvbSIsImlhdCI6MTcyMjcxOTI1MSwiZXhwIjoxNzIyNzI2NDUxfQ.34KkymGUnd4drHppu3OndJ636AWUxMyQM6J_Ko5n6sY\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "profile",
+					"item": [
+						{
+							"name": ":id",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/user/profile/{{userId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"user",
+										"profile",
+										"{{userId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": ":id",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"description\":\"Architecte Logiciel en devenir\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/user/profile/{{userId}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"user",
+										"profile",
+										"{{userId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "byTags",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/user/profile?tags",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"user",
+										"profile"
+									],
+									"query": [
+										{
+											"key": "tags",
+											"value": null
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "user",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\":\"Foo\",\r\n    \"lastName\":\"Bar\",\r\n    \"pictureUrl\":\"https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?cs=srgb&dl=pexels-pixabay-220453.jpg&fm=jpg\",\r\n    \"description\":\"Front-end developper with extensive experience in React\",\r\n    \"email\":\"foo.bar@gmail.com\",\r\n    \"password\":\"password\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/user",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "melvin",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"firstName\":\"Melvin\",\r\n    \"lastName\":\"Cerba\",\r\n    \"email\":\"mel@gmail.com\",\r\n    \"password\":\"helloWorld\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/user",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"user"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 409,
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "400 - no names",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"firstName\":\"\",\r\n    \"lastName\":\"\",\r\n    \"email\":\"mel@gmail.com\",\r\n    \"password\":\"helloWorld\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/user",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"user"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "experience",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userId\": {{userId}},\r\n  \"pictureUrl\": \"https://d33wubrfki0l68.cloudfront.net/49c2be6f2607b5c12dd27f8ecc8521723447975d/f05c5/logo-small.cbbeba89.svg\",\r\n  \"title\": \"'Curriculum Vitae' - demo typescript project with NestJS & Nuxt\",\r\n  \"description\": \"NestJS backend (auth, pagination, dto validation, ...) & Nuxt front end (SSR, routing, form validation, ... ) \",\r\n  \"link\": \"not yet\",\r\n  \"tags\": [\r\n    { \"name\": \"Nuxt\"},\r\n    { \"name\": \"NestJS\"},\r\n    { \"name\": \"Typescript\"}\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/experience",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"experience"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "search",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\": {{userId}},\r\n    \"tagNames\":[\"myTag2\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/experience/search",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"experience",
+								"search"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "user's experiences",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\":{{userId}}\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/experience/search",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"experience",
+										"search"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "909"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"38d-Tu7OR/aahKoBiF75XaM4XxkdIv0\""
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 03 Aug 2024 18:36:41 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": [\n        {\n            \"id\": 3,\n            \"pictureUrl\": \"https://th.bing.com/th/id/R.6af6fd9c37f0de4abb34ea0fd20acce3?rik=55mqMmrTutVR0Q&pid=ImgRaw&r=0\",\n            \"title\": \"myExp\",\n            \"description\": \"very good description\",\n            \"link\": \"google.com\",\n            \"tags\": [\n                {\n                    \"id\": 1,\n                    \"name\": \"myTag\"\n                }\n            ],\n            \"user\": {\n                \"id\": 9,\n                \"firstName\": \"Melvin\",\n                \"lastName\": \"Cerba\",\n                \"description\": null,\n                \"email\": \"melon@gmail.com\",\n                \"passwordHash\": \"$2b$10$ws4lFdA7UITKztZt.qn2ZO6CFdTNokixbYegqLLRuSQd/rsnBeDpS\"\n            }\n        },\n        {\n            \"id\": 4,\n            \"pictureUrl\": \"https://th.bing.com/th/id/R.6af6fd9c37f0de4abb34ea0fd20acce3?rik=55mqMmrTutVR0Q&pid=ImgRaw&r=0\",\n            \"title\": \"myExp2\",\n            \"description\": \"even better description\",\n            \"link\": \"facebook.com\",\n            \"tags\": [\n                {\n                    \"id\": 1,\n                    \"name\": \"myTag\"\n                },\n                {\n                    \"id\": 2,\n                    \"name\": \"myTag2\"\n                }\n            ],\n            \"user\": {\n                \"id\": 9,\n                \"firstName\": \"Melvin\",\n                \"lastName\": \"Cerba\",\n                \"description\": null,\n                \"email\": \"melon@gmail.com\",\n                \"passwordHash\": \"$2b$10$ws4lFdA7UITKztZt.qn2ZO6CFdTNokixbYegqLLRuSQd/rsnBeDpS\"\n            }\n        }\n    ],\n    \"total\": 2,\n    \"nextPage\": null,\n    \"previousPage\": null,\n    \"lastPage\": 1\n}"
+						},
+						{
+							"name": "myTag2",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\": {{userId}},\r\n    \"tagNames\":[\"myTag2\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/experience/search",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"experience",
+										"search"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "480"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"1e0-4L5a2NOmqVjQl+nwdM84DOUxjkk\""
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 03 Aug 2024 18:43:20 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": [\n        {\n            \"id\": 4,\n            \"pictureUrl\": \"https://th.bing.com/th/id/R.6af6fd9c37f0de4abb34ea0fd20acce3?rik=55mqMmrTutVR0Q&pid=ImgRaw&r=0\",\n            \"title\": \"myExp2\",\n            \"description\": \"even better description\",\n            \"link\": \"facebook.com\",\n            \"tags\": [\n                {\n                    \"id\": 2,\n                    \"name\": \"myTag2\"\n                }\n            ],\n            \"user\": {\n                \"id\": 9,\n                \"firstName\": \"Melvin\",\n                \"lastName\": \"Cerba\",\n                \"description\": null,\n                \"email\": \"melon@gmail.com\",\n                \"passwordHash\": \"$2b$10$ws4lFdA7UITKztZt.qn2ZO6CFdTNokixbYegqLLRuSQd/rsnBeDpS\"\n            }\n        }\n    ],\n    \"total\": 1,\n    \"nextPage\": null,\n    \"previousPage\": null,\n    \"lastPage\": 1\n}"
+						}
+					]
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"description\":\"New description\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/experience/4",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"experience",
+								"4"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "tag",
+			"item": [
+				{
+					"name": "category",
+					"item": [
+						{
+							"name": "create",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\":\"Experience\",\r\n    \"tags\":[\r\n        \"Job\"\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/tag/category",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"tag",
+										"category"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get all",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/tag/category",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"tag",
+										"category"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[{\r\n    \"name\":\"Job\",\r\n    \"aliases\": [\r\n        \"Metier\",\r\n        \"Boulot\",\r\n        \"Work\",\r\n        \"Travail\"\r\n    ]\r\n}]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/tag",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"tag"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add aliases to tag",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"NestJS\",\r\n    \"aliases\": [\r\n        \"nest\"\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/tag/aliases",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"tag",
+								"aliases"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Autocompletion",
+			"item": [
+				{
+					"name": "autocomplete",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"query\":\"nes\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/autocompletion",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"autocompletion"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "url",
+			"value": "localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "userId",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
