@@ -7,6 +7,8 @@ import { Repository } from 'typeorm';
 import { TagCategoryService } from './tag-category.service';
 import slugify from 'slugify';
 import { addAliasesToTagDto } from './dto/add-aliases-to-tag.dto';
+import { ICreateTagData } from './interfaces/create-tag-data.interface';
+import { IAddAliasesToTagData } from './interfaces/add-aliases-to-tag-data.interface';
 
 @Injectable()
 export class TagService {
@@ -24,7 +26,7 @@ export class TagService {
     return this.tagRepository.findOne({ where: { id } });
   }
 
-  async create({ name, categoryName, aliases, aliasFor }: CreateTagDto) {
+  async create({ name, categoryName, aliases, aliasFor }: ICreateTagData) {
     let category = null;
 
     if (categoryName) {
@@ -57,29 +59,34 @@ export class TagService {
 
   }
 
-  async getOrCreate(createTagDto: CreateTagDto): Promise<Tag> {
-    let tag = await this.findByName(createTagDto.name);
+  async getOrCreate(createTagData: ICreateTagData): Promise<Tag> {
+    let tag = await this.findByName(createTagData.name);
     if (!tag) {
-      tag = await this.create(createTagDto);
+      tag = await this.create(createTagData);
     }
     return tag;
   }
 
-  async addAliasesToTag(dto: addAliasesToTagDto) {
-    const tag = await this.tagRepository.findOne({ where: { name: dto.name }, relations: ['aliases'] });
+  async addAliasesToTag(data: IAddAliasesToTagData) {
+    const tag = await this.tagRepository.findOne({ where: { name: data.name }, relations: ['aliases'] });
     if (!tag) {
-      throw new NotFoundException(`Tag with name ${dto.name} not found : aliases ${dto.aliases} could not be appended.`);
+      throw new NotFoundException(`Tag with name ${data.name} not found : aliases ${data.aliases} could not be appended.`);
     }
 
-    const dtoAliasesTags = await Promise.all(dto.aliases.map(name => {
+    const aliasesTags = await Promise.all(data.aliases.map(name => {
       const new_tag = this.getOrCreate({ name });
       return new_tag;
     }));
 
-    const mergedAliases = Object.values([...tag.aliases, ...dtoAliasesTags].reduce((acc, tag) => { acc[tag.id] = tag; return acc }, {}))
+    const mergedAliases = Object.values([...tag.aliases, ...aliasesTags].reduce((acc, tag) => { acc[tag.id] = tag; return acc }, {}))
 
     const newTag = { ...tag, aliases: mergedAliases };
 
     return this.tagRepository.save(newTag);
+  }
+
+  async findAll(includeAliases = false) {
+    const options = includeAliases ? {} : { where: { aliasFor: null } };
+    return this.tagRepository.find(options);
   }
 }

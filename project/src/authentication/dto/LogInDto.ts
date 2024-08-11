@@ -1,5 +1,6 @@
 import { IsEmail, IsString } from 'class-validator';
-export class LogInDto {
+import { BaseLogInData } from '../interfaces/login.interface';
+export class LogInDto extends BaseLogInData {
   @IsEmail()
   email: string;
 

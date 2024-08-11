@@ -9,8 +9,9 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { CreateExperienceDto } from '../../experience/dto/create-experience.dto';
+import { ICreateUserData } from '../interfaces/create-user-data.interface';
 
-export class CreateUserDto {
+export class CreateUserDto implements ICreateUserData {
   @IsString()
   @IsNotEmpty()
   firstName: string;
@@ -25,7 +26,7 @@ export class CreateUserDto {
 
   @IsString()
   @IsOptional()
-  pictureUrl: string | null;
+  pictureUrl?: string | null;
 
   @IsEmail()
   email: string;

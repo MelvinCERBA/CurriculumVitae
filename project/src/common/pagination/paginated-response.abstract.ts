@@ -1,4 +1,4 @@
-export abstract class PaginatedResponseDto<T> {
+export class PaginatedResponse<T> {
   data: T[];
   total: number;
   nextPage: number | null;

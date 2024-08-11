@@ -5,11 +5,12 @@ import { TagCategoryService } from './tag-category.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TagCategory } from './entities/tag-category.entity';
 import { Tag } from './entities/tag.entity';
+import { TagResolver } from './graphql/tag.resolver';
 
 @Module({
   controllers: [TagController],
   imports: [TypeOrmModule.forFeature([Tag, TagCategory])],
-  providers: [TagService, TagCategoryService],
+  providers: [TagService, TagCategoryService, TagResolver],
   exports: [TagService, TypeOrmModule]
 })
 export class TagModule { }

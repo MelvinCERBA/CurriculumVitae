@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TagCategory } from './entities/tag-category.entity';
 import { TagService } from './tag.service';
+import { ICreateTagCategoryData } from './interfaces/create-tag-category.dto';
 
 @Injectable()
 export class TagCategoryService {
@@ -17,18 +18,18 @@ export class TagCategoryService {
     private readonly tagService: TagService
   ) { }
 
-  async create(createTagCategoryDto: CreateTagCategoryDto) {
+  async create(createTagCategoryData: ICreateTagCategoryData) {
     let savedCategory = await this.tagCategoryRepository.save({
-      name: createTagCategoryDto.name,
+      name: createTagCategoryData.name,
     });
 
-    if (!createTagCategoryDto.tags) {
+    if (!createTagCategoryData.tags) {
       return savedCategory;
     }
 
     const tags = await Promise.all(
-      createTagCategoryDto.tags.map(async name => {
-        return this.tagService.getOrCreate({ name, categoryName: createTagCategoryDto.name });
+      createTagCategoryData.tags.map(async name => {
+        return this.tagService.getOrCreate({ name, categoryName: createTagCategoryData.name });
       })
     );
 
@@ -66,16 +67,4 @@ export class TagCategoryService {
       }
     });
   }
-
-  // findOne(id: number) {
-  //   return `This action returns a #${id} tag`;
-  // }
-
-  // update(id: number, updateTagDto: UpdateTagDto) {
-  //   return `This action updates a #${id} tag`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} tag`;
-  // }
 }

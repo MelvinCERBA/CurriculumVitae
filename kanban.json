@@ -1,0 +1,24 @@
+{
+  "To Do": [
+    {
+      "id": "73f2ef3a-1c2a-4dad-9abf-44995ab454ed",
+      "task": "Task 1"
+    },
+    {
+      "id": "cff60070-9fe0-4542-a184-2e178eac5d1a",
+      "task": "Task 2"
+    }
+  ],
+  "In Progress": [
+    {
+      "id": "598461fc-c9bb-4545-a9d4-6d9afa4b2db3",
+      "task": "Task 3"
+    }
+  ],
+  "Done": [
+    {
+      "id": "f9686e63-b251-4833-9428-664737b4a2bb",
+      "task": "Task 4"
+    }
+  ]
+}

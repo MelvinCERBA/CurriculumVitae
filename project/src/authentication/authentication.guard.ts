@@ -7,6 +7,7 @@ import { JwtPayload } from './interfaces/jwtPayload.interface';
 import { Request } from 'express';
 import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from './public.guard';
+import { GqlExecutionContext } from '@nestjs/graphql/dist';
 
 @Injectable()
 export class AuthenticationGuard implements CanActivate {
@@ -23,7 +24,8 @@ export class AuthenticationGuard implements CanActivate {
     ]);
     if (isPublic) return true;
 
-    const request = context.switchToHttp().getRequest();
+
+    const request = this.getRequest(context)
     const token = this.extractTokenFromHeader(request);
     if (!token) {
       throw new UnauthorizedException();
@@ -42,6 +44,19 @@ export class AuthenticationGuard implements CanActivate {
       throw new UnauthorizedException();
     }
     return true;
+  }
+
+  private getRequest(context: ExecutionContext): Request {
+    const contextType = context.getType() as 'http' | 'ws' | 'rpc' | 'graphql'
+
+    switch (contextType) {
+      case 'http':
+        return context.switchToHttp().getRequest();
+      case 'graphql':
+        return GqlExecutionContext.create(context).getContext().req;
+      default:
+        throw new Error(`Invalid context type ${context.getType()}`);
+    }
   }
 
   private extractTokenFromHeader(request: Request): string | undefined {

@@ -1,8 +1,6 @@
 import { IsArray, IsNumber, IsOptional, IsString, ValidateNested } from "class-validator"
-import { Tag } from "../../tag/entities/tag.entity"
 import { CreateTagDto } from "../../tag/dto/create-tag.dto"
 import { Type } from "class-transformer"
-import { Experience } from "../entities/experience.entity"
 
 export class CreateExperienceDto {
   @IsNumber()

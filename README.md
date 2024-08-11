@@ -1,14 +1,14 @@
 # Development
 
-1. Up the database
-> docker compose up -d
+1. Up the database (in `/project`)
 
-2. launch the NestJS back end
-> cd project
-> npm run start:dev
+   > docker compose up -d
 
-3. launch the nuxt front end
-> cd NuxtApp
-> npm run dev
+2. launch the NestJS back end (in `/project`)
+
+   > npm run start:dev
+
+3. launch the nuxt front end (in `/NuxtApp`)
+   > npm run dev
 
 (Use postman collection to add experiences)

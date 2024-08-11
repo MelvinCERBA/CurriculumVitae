@@ -1,15 +1,10 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateExperienceDto } from './create-experience.dto';
 import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
-import { Tag } from '../../tag/entities/tag.entity';
-import { CreateTagDto } from '../../tag/dto/create-tag.dto';
-import { PaginatedDto } from '../../common/dto/paginated.dto';
-import { PaginatedResponseDto } from '../../common/dto/paginated-response.dto';
 import { Experience } from '../entities/experience.entity';
 import { UserResponseDto } from '../../user/dto/user-response.dto';
 import { TagResponseDto } from '../../tag/dto/tag-response.dto';
+import { BaseGetExperiencesData } from '../interfaces/get-experiences.interface';
 
-export class GetExperiencesDto extends PaginatedDto {
+export class GetExperiencesDto extends BaseGetExperiencesData {
   @IsNumber()
   @IsOptional()
   userId: number

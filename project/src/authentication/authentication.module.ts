@@ -7,6 +7,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 import { AuthenticationGuard } from './authentication.guard';
 import { APP_GUARD } from '@nestjs/core';
+import { AuthenticationResolver } from './graphql/authentication.resolver';
 @Module({
   controllers: [AuthenticationController],
   providers: [
@@ -15,7 +16,8 @@ import { APP_GUARD } from '@nestjs/core';
     {
       provide: APP_GUARD,
       useClass: AuthenticationGuard,
-    }
+    },
+    AuthenticationResolver
   ],
   imports: [
     forwardRef(() => UserModule),

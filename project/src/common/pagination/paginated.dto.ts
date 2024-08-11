@@ -1,6 +1,6 @@
 import { IsInt, IsOptional, Max, Min } from "class-validator"
 
-export abstract class PaginatedDto {
+export abstract class BasePaginationRequest {
   @IsInt()
   @Min(1)
   @Max(100)

@@ -4,9 +4,10 @@ import { AutocompletionController } from './autocompletion.controller';
 import { TagModule } from '../tag/tag.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Tag } from '../tag/entities/tag.entity';
+import { AutocompletionResolver } from './graphql/autocompletion.resolver';
 
 @Module({
-  providers: [AutocompletionService],
+  providers: [AutocompletionService, AutocompletionResolver],
   controllers: [AutocompletionController],
   imports: [TagModule],
 })
