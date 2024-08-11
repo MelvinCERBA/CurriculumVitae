@@ -11,7 +11,7 @@ export class AutocompletionService {
   ) { }
 
 
-  async autocompletion(query: string): Promise<Tag[]> {
-    return this.tagRepository.find({ where: { name: Like(`%${query}%`) }, order: { priority: 'DESC' }, take: 5 });
+  async autocompletion(query: string, limit: number = 5): Promise<Tag[]> {
+    return this.tagRepository.find({ where: { slug: Like(`${query.toLowerCase()}%`) }, order: { priority: 'DESC' }, take: limit });
   }
 }

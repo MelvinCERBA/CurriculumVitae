@@ -1,6 +1,7 @@
 import { IsArray, IsNumber, IsOptional, IsString } from "class-validator";
+import { ICreateTagData } from "../interfaces/create-tag-data.interface";
 
-export class CreateTagDto {
+export class CreateTagDto implements ICreateTagData {
   @IsString()
   name: string;
 

@@ -1,4 +1,4 @@
-import { Controller, Post, Body, HttpException, HttpStatus, HttpCode, Param, Get, UseGuards, Req, Patch } from '@nestjs/common';
+import { Controller, Post, Body, HttpException, HttpStatus, HttpCode, Param, Get, UseGuards, Req, Patch, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
 import { DataSourceErrors } from '../error/datasourceErrors.enum';
@@ -7,7 +7,7 @@ import { request } from 'express';
 import { Public } from '../authentication/public.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserResponseDto } from './dto/user-response.dto';
-import { ProfilesDto } from './dto/profiles.dto';
+import { GetUserDto } from './dto/get-users.dto';
 
 @Controller('user')
 export class UserController {
@@ -38,7 +38,7 @@ export class UserController {
   @Post('profile')
   @HttpCode(HttpStatus.OK)
   @Public()
-  async getProfiles(@Body() { tags }: ProfilesDto) {
+  async getProfiles(@Body() { tags }: GetUserDto) {
     const users = await this.userService.findUsersByTags(tags);
     return users.map(profile => UserResponseDto.fromEntity(profile));
   }
@@ -46,7 +46,10 @@ export class UserController {
   @Patch('profile/:id')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthenticationGuard)
-  async patchProfile(@Param("id") userId, @Body() dto: UpdateUserDto): Promise<UserResponseDto> {
+  async patchProfile(@Req() { user }, @Param("id") userId, @Body() dto: UpdateUserDto): Promise<UserResponseDto> {
+    if (userId != user.userId) {
+      throw new UnauthorizedException("Cannot modify other users.");
+    }
     const profile = await this.userService.update(userId, dto);
     return UserResponseDto.fromEntity(profile);
   }

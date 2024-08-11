@@ -2,10 +2,10 @@ import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/co
 import { ConfigService } from '@nestjs/config';
 import EnvironmentVariables from 'config/env';
 import { compare } from 'bcrypt';
-import { LogInDto, LogInResponseDto } from './dto/LogInDto';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './interfaces/jwtPayload.interface';
+import { BaseLogInData } from './interfaces/login.interface';
 
 @Injectable()
 export class AuthenticationService {
@@ -15,7 +15,7 @@ export class AuthenticationService {
     private jwtService: JwtService,
   ) { }
 
-  async logIn({ email, password }: LogInDto): Promise<LogInResponseDto> {
+  async logIn({ email, password }: BaseLogInData): Promise<{ userId: number, token: string }> {
     const user = await this.usersService.findOneByEmail(email);
     if (!user) {
       throw new NotFoundException(`No user with email ${email}.`);

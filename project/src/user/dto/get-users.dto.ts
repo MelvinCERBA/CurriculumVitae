@@ -1,6 +1,6 @@
 import { IsArray, IsOptional, IsString } from "class-validator";
 
-export class ProfilesDto {
+export class GetUserDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })

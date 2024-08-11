@@ -4,7 +4,7 @@ import { CreateExperienceDto } from './dto/create-experience.dto';
 import { UpdateExperienceDto } from './dto/update-experience.dto';
 import { AuthenticationGuard } from '../authentication/authentication.guard';
 import { ExperienceResponseDto, GetExperiencesDto } from './dto/get-experiences.dto';
-import { PaginatedResponseDto } from '../common/dto/paginated-response.dto';
+import { PaginatedResponse } from '../common/pagination/paginated-response.abstract';
 import { paginateResponse } from '../common/utils/pagination.utils';
 import { Public } from '../authentication/public.guard';
 
@@ -23,10 +23,13 @@ export class ExperienceController {
   }
 
   @Post('search') @Public()
-  async findAll(@Body() dto: GetExperiencesDto): Promise<PaginatedResponseDto<ExperienceResponseDto>> {
-    const [experiences, total] = await this.experienceService.search(dto)
-    const expDtos = experiences.map(experience => ExperienceResponseDto.fromEntity(experience))
-    return paginateResponse([expDtos, total], dto.page, dto.limit);
+  async findAll(@Body() dto: GetExperiencesDto): Promise<PaginatedResponse<ExperienceResponseDto>> {
+    const pagedExps = await this.experienceService.search(dto)
+    const pagedDtos: PaginatedResponse<ExperienceResponseDto> = {
+      ...pagedExps,
+      data: pagedExps.data.map(experience => ExperienceResponseDto.fromEntity(experience))
+    }
+    return pagedDtos;
   }
 
   // @Get(':id')

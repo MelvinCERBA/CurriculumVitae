@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, Query } from '@nestjs/common';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from './datasource';
@@ -8,6 +8,9 @@ import { ExperienceModule } from './experience/experience.module';
 import { TagModule } from './tag/tag.module';
 import { AutocompletionService } from './autocompletion/autocompletion.service';
 import { AutocompletionModule } from './autocompletion/autocompletion.module';
+import { GraphQLModule } from '@nestjs/graphql/dist';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 
 @Module({
   imports: [
@@ -16,6 +19,12 @@ import { AutocompletionModule } from './autocompletion/autocompletion.module';
       envFilePath: ['config/.env'],
       isGlobal: true,
       cache: true,
+    }),
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      autoSchemaFile: "schema.gql",
+      playground: false,
+      plugins: [ApolloServerPluginLandingPageLocalDefault()],
     }),
     UserModule,
     AuthenticationModule,

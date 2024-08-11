@@ -1,8 +1,7 @@
 import { ArrayNotEmpty, IsArray, IsOptional, IsString, ValidateNested } from "class-validator"
-import { TagCategory } from "../entities/tag-category.entity"
-import { Type } from "class-transformer"
+import { ICreateTagCategoryData } from "../interfaces/create-tag-category.dto"
 
-export class CreateTagCategoryDto {
+export class CreateTagCategoryDto implements ICreateTagCategoryData {
   @IsString()
   name: string
 
